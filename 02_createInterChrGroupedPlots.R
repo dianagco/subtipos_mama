@@ -10,7 +10,7 @@ load(file="genes.annot.RData")
 load(file="adjmatrix_basal.RData")
 
 all.genes.annot <- genes.annot
-chrs <- c(as.character(1:22), "X", "Y")
+chrs <- c(as.character(1:22), "X")
 
 ## Extract inter-chromosmal interactions
 for (ch1 in chrs) {
