@@ -7,7 +7,7 @@ setwd("/labs/csbig/subtipos_mama")
 
 cat("Loading data\n")
 load(file="genes.annot.RData")
-load(file="adjmatrix_basal.RData")
+load(file="adjmatrix_her2.RData")
 
 all.genes.annot <- genes.annot
 chrs <- c(as.character(1:22), "X")
@@ -32,15 +32,15 @@ for (ch1 in chrs) {
   ml <- melt(l, value.name = "MI")
   colnames(ml) <- c("MI", "Chr")
   cat("Saving plot.\n")
-  png(paste("Basal_ch", ch1, ".png", sep=""), width =800 , height = 400)
+  png(paste("Her2_ch", ch1, ".png", sep=""), width =800 , height = 400)
   myplot <- ggplot(data=ml) + 
     geom_density(aes(x = MI, group = Chr, colour = Chr)) +
     coord_cartesian(xlim = c(0, 0.25))
   print(myplot)
   dev.off() 
   cat("Saving data.\n")
-  save(ml, file=paste("basal_ch", ch1, ".RData", sep=""))
-  write.table(ml, file=paste("basal_ch", ch1, ".tsv", sep=""), 
+  save(ml, file=paste("her2_ch", ch1, ".RData", sep=""))
+  write.table(ml, file=paste("her2_ch", ch1, ".tsv", sep=""), 
               quote = F, row.names = F, col.names = T, sep = "\t")
 }
 
