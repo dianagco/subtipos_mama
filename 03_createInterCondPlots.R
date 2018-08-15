@@ -6,9 +6,9 @@ myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")), space="Lab")
 start <- Sys.time()
 cat("Starting at, ", format(start, "%H:%M:%OS3"), "\n" )
 
-setwd("/home/diana/Workspace/subtipos_mama")
+setwd("/labs/csbig/subtipos_mama")
 
-chrs <- c(as.character(1:22), "X", "Y")
+chrs <- c(as.character(1:22), "X")
 c1 <- "healthy"
 c2 <- "normal"
 
@@ -16,10 +16,10 @@ g <- parallel::mclapply(X = chrs, mc.cores = 5,  mc.cleanup = FALSE, FUN = funct
   cat("Working with chromosome ", ch, "\n")
   cat("Loading data\n")
   
-  load(file=paste("rdata/", c1, "/", c1, "_ch", ch, ".RData", sep="")) 
+  load(file=paste("rdata/", c1, "/inter-take2/", c1, "_ch", ch, ".RData", sep="")) 
   ml1 <- ml
   ml1$condition <- c1
-  load(file=paste("rdata/", c2, "/", c2, "_ch", ch, ".RData", sep="")) 
+  load(file=paste("rdata/", c2, "/inter-take2/", c2, "_ch", ch, ".RData", sep="")) 
   ml2 <- ml
   ml2$condition <- c2
   
