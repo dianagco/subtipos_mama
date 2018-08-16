@@ -1,12 +1,12 @@
 start <- Sys.time()
 cat("Starting at, ", format(start, "%H:%M:%OS3"), "\n" )
 
-#setwd("~/Workspace/subtipos_mama")
-setwd("/labs/csbig/subtipos_mama")
+setwd("~/Workspace/subtipos_mama")
+#setwd("/labs/csbig/subtipos_mama")
 
 cat("Loading data\n")
 load(file="genes.annot.RData")
-load(file="adjmatrix_lumb.RData")
+load(file="adjmatrix_basal.RData")
 
 all.genes.annot <- genes.annot
 chrs <- c(as.character(1:22), "X")
@@ -32,17 +32,17 @@ for (ch in chrs) {
   cat("Getting bin order.\n")
   g <- plyr::ldply(g)
   colnames(g) <- c("bin", "mi")
-  
-  o <- lapply(unique(g$bin), function(b) {
-    l <- g[g$bin == b, ]
-    l$order <- order(l$mi)
-    l
-  })
-  
-  o <- plyr::ldply(o)
-  o <- o[order(o$bin, o$order),  ]
+  # 
+  # o <- lapply(unique(g$bin), function(b) {
+  #   l <- g[g$bin == b, ]
+  #   l$order <- order(l$mi)
+  #   l
+  # })
+  # 
+  # o <- plyr::ldply(o)
+  # o <- o[order(o$bin, o$order),  ]
   cat("Saving file.\n")
-  write.table(o, file=paste("lumb_intra_order_",ch , ".tsv", sep=""), row.names = F, col.names = T, sep = "\t")
+  write.table(g, file=paste("lumb_intra_order_",ch , ".tsv", sep=""), row.names = F, col.names = T, sep = "\t")
 }
 end <- Sys.time()
 cat("Whole thing took ", (end - start), "\n")
