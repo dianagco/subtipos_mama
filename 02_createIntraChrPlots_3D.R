@@ -1,14 +1,12 @@
-library(ggplot2)
-
 start <- Sys.time()
 cat("Starting at, ", format(start, "%H:%M:%OS3"), "\n" )
 
-setwd("~/Workspace/subtipos_mama")
-#setwd("/labs/csbig/subtipos_mama")
+#setwd("~/Workspace/subtipos_mama")
+setwd("/labs/csbig/subtipos_mama")
 
 cat("Loading data\n")
 load(file="genes.annot.RData")
-load(file="adjmatrix_basal.RData")
+load(file="adjmatrix_lumb.RData")
 
 all.genes.annot <- genes.annot
 chrs <- c(as.character(1:22), "X")
@@ -19,7 +17,7 @@ for (ch in chrs) {
   cat("Working with chromosome", ch, "\n")
   genes.annot <- all.genes.annot[all.genes.annot$Chr == ch, ]
   genes <- genes.annot$symbol
-  g <- parallel::mclapply(X = genes, mc.cores = 4,  mc.cleanup = FALSE, FUN = function(gene1) {
+  g <- parallel::mclapply(X = genes, mc.cores = 6,  mc.cleanup = FALSE, FUN = function(gene1) {
     #cat("Gene: ", gene1, "\n")
     other.genes <- genes[which(genes != gene1)]
     
@@ -44,7 +42,7 @@ for (ch in chrs) {
   o <- plyr::ldply(o)
   o <- o[order(o$bin, o$order),  ]
   cat("Saving file.\n")
-  write.table(o, file=paste("basal_intra_order_",ch , ".tsv", sep=""), row.names = F, col.names = T, sep = "\t")
+  write.table(o, file=paste("lumb_intra_order_",ch , ".tsv", sep=""), row.names = F, col.names = T, sep = "\t")
 }
 end <- Sys.time()
 cat("Whole thing took ", (end - start), "\n")

@@ -7,7 +7,7 @@ setwd("/labs/csbig/subtipos_mama")
 
 cat("Loading data\n")
 load(file="genes.annot.RData")
-load(file="adjmatrix_her2.RData")
+load(file="adjmatrix_lumb_norm.RData")
 
 all.genes.annot <- genes.annot
 chrs <- c(as.character(1:22), "X")
@@ -16,7 +16,7 @@ chrs <- c(as.character(1:22), "X")
 for (ch1 in chrs) {
   other.chrs <- chrs[which(chrs != ch1)]
   genes.ch1 <- all.genes.annot[all.genes.annot$Chr == ch1, ]
-  g <- parallel::mclapply(X = other.chrs, mc.cores = 4,  mc.cleanup = FALSE, FUN = function(ch2) {
+  g <- parallel::mclapply(X = other.chrs, mc.cores = 6,  mc.cleanup = FALSE, FUN = function(ch2) {
     cat("Working with chromosome ", ch1, " and chromosome ", ch2, "\n")
     genes.ch2 <- all.genes.annot[all.genes.annot$Chr == ch2, ]
     m1 <- adjmatrix[rownames(adjmatrix) %in% genes.ch1$symbol, 
@@ -32,15 +32,15 @@ for (ch1 in chrs) {
   ml <- melt(l, value.name = "MI")
   colnames(ml) <- c("MI", "Chr")
   cat("Saving plot.\n")
-  png(paste("Her2_ch", ch1, ".png", sep=""), width =800 , height = 400)
+  png(paste("LumB_norm_ch", ch1, ".png", sep=""), width =800 , height = 400)
   myplot <- ggplot(data=ml) + 
     geom_density(aes(x = MI, group = Chr, colour = Chr)) +
     coord_cartesian(xlim = c(0, 0.25))
   print(myplot)
   dev.off() 
   cat("Saving data.\n")
-  save(ml, file=paste("her2_ch", ch1, ".RData", sep=""))
-  write.table(ml, file=paste("her2_ch", ch1, ".tsv", sep=""), 
+  save(ml, file=paste("lumb_norm_ch", ch1, ".RData", sep=""))
+  write.table(ml, file=paste("lumb_norm_ch", ch1, ".tsv", sep=""), 
               quote = F, row.names = F, col.names = T, sep = "\t")
 }
 
