@@ -1,5 +1,4 @@
 library(ggplot2)
-
 start <- Sys.time()
 cat("Starting at, ", format(start, "%H:%M:%OS3"), "\n" )
 
@@ -36,7 +35,26 @@ for (cond in conds) {
   
   cat("Valor máximo duplicados: ", max(table(dist.mi.df[duplicated(dist.mi.df$distance), "distance"])), "\t")
   
-  write.table(dist.mi.df, file = paste(cond,"_mi_distance_", ch, ".tsv", sep=""), sep="\t", 
-              col.names = T, row.names = F, quote = F)
+  #write.table(dist.mi.df, file = paste(cond,"_mi_distance_", ch, ".tsv", sep=""), sep="\t", 
+  #            col.names = T, row.names = F, quote = F)
   
+  bins <- split(dist.mi.df, seq(from =1, to = nrow(dist.mi.df)-1)%/%50)
+  testy <- parallel::mclapply(X = bins, mc.cores = 3,  mc.cleanup = FALSE, FUN = function(b){
+    myplot <- ggplot(b, aes(mi))+geom_density()
+    p <- layer_data(myplot)
+    return(matrix(c(p[which.max(p$y), "x"], mean(b$mi), median(b$mi), max(b$mi)), ncol = 4))
+  })
+  stats <- plyr::ldply(testy)
+  colnames(stats) <- c("id", "moda", "media", "mediana", "max")
+  write.table(stats, file = paste("stats_", cond,"_100k_", ch, ".tsv", sep=""), sep="\t", 
+              col.names = T, row.names = F, quote = F)
+  myplot <- ggplot(data=stats, aes(x=id+1, y=max, group=1)) +
+    geom_point(size = 1.5)
+  print(myplot)
+  
+  plot(stats$id +1 , stats$media, main="Scatterplot Example", 
+       xlab="id", ylab="media", pch=19)
+  abline(lm(stats$id +1~stats$media), col="red") # regression line (y~x) 
+  lines(lowess(stats$media,stats$id), col="blue") 
 }
+
