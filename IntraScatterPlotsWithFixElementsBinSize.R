@@ -35,6 +35,8 @@ generateDistanciaMIByChromosome <- function () {
       
       dist.mi.df <- merge(dist.df, mi.df)
       dist.mi.df <- dist.mi.df[with(dist.mi.df, order(distance, mi)), ]
+      dist.mi.df$cond <- cond
+      dist.mi.df$ch <- ch
       
       write.table(dist.mi.df, file = paste("rdata/pares-distancia-mi/", cond,"_distance_mi", ch, ".tsv", sep=""), sep="\t", 
                              col.names = T, row.names = F, quote = F)
@@ -182,4 +184,4 @@ getThirdOrderModel <- function(binsize) {
   }
 }
 
-getThirdOrderModel(100)
+#getThirdOrderModel(100)
