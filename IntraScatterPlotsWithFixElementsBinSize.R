@@ -184,4 +184,40 @@ getThirdOrderModel <- function(binsize) {
   }
 }
 
-#getThirdOrderModel(100)
+getThirdOrderModel(100)
+
+
+getAllMIDistanceMeans <- function(binsize) {
+  conds <- c("basal", "luma", "lumb", "her2", "healthy")
+  chrs <- c(as.character(1:22), "X")
+  #chrs <- c(as.character(1:2))
+  
+  conditiondfs <- lapply(X = conds, FUN = function(cond){
+    
+    cat("Working with condition ", cond, "\n")
+    
+    meansbych <- parallel::mclapply(X = chrs, mc.cores = 6,  mc.cleanup = FALSE, FUN = function(ch){
+      dist.mi.df <- read.delim(file=paste("rdata/pares-distancia-mi/", cond,"/", cond, "_distance_mi", ch, ".tsv", sep=""), header = T)
+      dist.mi.df <- dist.mi.df[with(dist.mi.df, order(distance, -mi)), ]
+      
+      dist.mi.df$bin <- ((as.numeric(rownames(dist.mi.df)) - 1)%/%binsize) + 1
+      dfmeans <- aggregate(cbind(distance, mi)~bin, data=dist.mi.df, FUN=mean, na.rm=TRUE)
+      dfmeans$cond <- cond
+      dfmeans$ch <- ch
+      return(dfmeans)
+    })
+    
+    df <- plyr::ldply(meansbych)
+    write.table(df, file = paste("rdata/intra-fixed-bins-size/",  cond, "_all.tsv", sep=""), sep="\t", 
+                col.names = T, row.names = F, quote = F)
+    
+    return(df)
+  })
+  
+  cdf <- plyr::ldply(conditiondfs)
+  write.table(cdf, file = paste("rdata/intra-fixed-bins-size/all.tsv", sep=""), sep="\t", 
+              col.names = T, row.names = F, quote = F)
+  
+}
+
+getAllMIDistanceMeans(100)
